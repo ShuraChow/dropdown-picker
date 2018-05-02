@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.css" rel="stylesheet">
+    <link href="src/css/dropdown-picker.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1 class="page-header" id="getting-started">Getting started</h1>
+
+    <h2>Installation</h2>
+
+    <form class="form-inline">
+        <div style="position: relative;">
+            <input class="form-control input-larg" placeholder="请选择分类" value="8" name="text1" readonly type="text" data-toggle="dropdown-picker" style="width: 50%">
+        </div>
+    </form>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.js"></script>
+<script src="src/dropdown-picker.js"></script>
+<script>
+    $(document).on('ready',function() {
+        var data1 = [
+            {
+                'id':1,
+                'title':'aa',
+                'sub':[
+                    {
+                        'id':2,
+                        'title':'bb',
+                        'sub':[
+                            {
+                                'id':4,
+                                'title':'dd'
+                            },
+                            {
+                                'id':5,
+                                'title':'ee'
+                            }
+                        ]
+                    },
+                    {
+                        'id':6,
+                        'title':'ff',
+                        'sub':[
+                            {
+                                'id':7,
+                                'title':'gg'
+                            },
+                            {
+                                'id':8,
+                                'title':'hh'
+                            }
+                        ]
+                    }
+                ]
+
+            },
+            {
+                'id':3,
+                'title':'cc'
+            }
+        ];
+
+        $('[data-toggle="dropdown-picker"]').DPiker({
+            'type':'single',
+            'data':data1
+        });
+
+    })
+
+</script>
+</body>
+</html>
