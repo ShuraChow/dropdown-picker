@@ -30,7 +30,7 @@
         placeholder:'请选择',
         // path: level_1.id,.....,level_x.id
         // single: level_x.id
-        type:'path',
+        type:'single',
         need_choice_minimal_level: true,
         data:[]
     };
