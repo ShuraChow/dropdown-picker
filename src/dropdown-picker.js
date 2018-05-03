@@ -476,21 +476,21 @@
         makeData:function(level,data,parent_id) {
             var $picker = this;
             level = (level ? level : $picker.maxlevel);
-            data = (data && data.length > 0 ? data : this.options.data);
+            data = (!$.isEmptyObject(data) ? data : this.options.data);
             parent_id = (parent_id ? parent_id : 0);
-            $.each(data, function(){
-                var $this = this;
+            for(var i in data){
+                var $this = data[i];
                 if (!$picker.data.hasOwnProperty(level)) {
                     $picker.data[level] = {};
                 }
                 if (!$picker.data[level].hasOwnProperty(parent_id)) {
                     $picker.data[level][parent_id] = {};
                 }
-                this.parent_id = parent_id;
+                $this.parent_id = parent_id;
                 var _data = {};
-                _data = $.extend(true,_data,this);
+                _data = $.extend(true,_data,$this);
                 delete _data[[$picker.options.rename_sub]];
-                $picker.data[level][parent_id][this[$picker.options.rename_id]] = {
+                $picker.data[level][parent_id][$this[$picker.options.rename_id]] = {
                     'id':_data[$picker.options.rename_id],
                     'title':_data[$picker.options.rename_title],
                     'parent_id':_data.parent_id,
@@ -503,11 +503,11 @@
                     'parent_id':_data.parent_id,
                     'level':_data.level
                 };
-                if ($this[$picker.options.rename_sub] && $this[$picker.options.rename_sub].length > 0) {
+                if (!$.isEmptyObject($this[$picker.options.rename_sub])) {
                     $picker.maxlevel = level+1;
                     $picker.makeData(level+1,$this[$picker.options.rename_sub],$this[$picker.options.rename_id]);
                 }
-            });
+            };
         },
 
         getList: function (data, level) {
