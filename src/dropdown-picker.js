@@ -35,6 +35,7 @@
         rename_id:'id',
         rename_title:'title',
         rename_sub:'sub',
+        responsive:true,
         data:[]
     };
 
