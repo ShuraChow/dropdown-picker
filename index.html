@@ -101,7 +101,7 @@ $('input[name="text"]').DPiker({
 
     <form class="form-inline" style="padding-bottom: 500px;">
         <div style="position: relative;">
-            <input class="form-control input-larg" placeholder="请选择分类" value="8" name="text1" readonly type="text" style="width: 50%">
+            <input class="form-control input-larg" placeholder="请选择分类" value="1,6,8" name="text1" readonly type="text" style="width: 50%">
             <br>
             <br>
             <br>
@@ -119,39 +119,39 @@ $('input[name="text"]').DPiker({
 <!-- Scripts -->
 <script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.js"></script>
-<script src="src/dropdown-picker.min.js"></script>
+<script src="src/dropdown-picker.js"></script>
 <script>
     $(document).on('ready',function() {
         var data1 = [
             {
-                'id':1,
-                'title':'aa',
-                'sub':[
+                'idc':1,
+                'titlec':'aa',
+                'subc':[
                     {
-                        'id':2,
-                        'title':'bb',
-                        'sub':[
+                        'idc':2,
+                        'titlec':'bb',
+                        'subc':[
                             {
-                                'id':4,
-                                'title':'dd'
+                                'idc':4,
+                                'titlec':'dd'
                             },
                             {
-                                'id':5,
-                                'title':'ee'
+                                'idc':5,
+                                'titlec':'ee'
                             }
                         ]
                     },
                     {
-                        'id':6,
-                        'title':'ff',
-                        'sub':[
+                        'idc':6,
+                        'titlec':'ff',
+                        'subc':[
                             {
-                                'id':7,
-                                'title':'gg'
+                                'idc':7,
+                                'titlec':'gg'
                             },
                             {
-                                'id':8,
-                                'title':'hh'
+                                'idc':8,
+                                'titlec':'hh'
                             }
                         ]
                     }
@@ -159,13 +159,16 @@ $('input[name="text"]').DPiker({
 
             },
             {
-                'id':3,
-                'title':'cc'
+                'idc':3,
+                'titlec':'cc'
             }
         ];
 
         $('input[name="text1"]').DPiker({
-            'type':'single',
+            'type':'path',
+            rename_id:'idc',
+            rename_title:'titlec',
+            rename_sub:'subc',
             'data':data1
         });
 

@@ -32,6 +32,9 @@
         // single: level_x.id
         type:'single',
         need_choice_minimal_level: true,
+        rename_id:'id',
+        rename_title:'title',
+        rename_sub:'sub',
         data:[]
     };
 
@@ -263,7 +266,6 @@
                         });
                         feedvalue = _feedvalue.join(',');break;
                 }
-                console.log(feedvalue);
                 $(this.$element).val(feedvalue);
             }
         },
@@ -443,17 +445,25 @@
             var path = {};
             var _getItem = function(data,value) {
                 for(var i in data){
-                    if (data[i].sub && data[i].sub.length > 0) {
-                        if(_getItem(data[i].sub,value)){
+                    if (data[i][$this.options.rename_sub] && data[i][$this.options.rename_sub].length > 0) {
+                        if(_getItem(data[i][$this.options.rename_sub],value)){
                             var _data = {};
                             _data = $.extend(true,_data,data[i]);
-                            delete _data.sub;
-                            path[data[i].id] = _data;
+                            delete _data[$this.options.rename_sub];
+                            path[data[i][$this.options.rename_id]] = {
+                                'id':_data[$this.options.rename_id],
+                                'title':_data[$this.options.rename_title],
+                                'parent_id':_data['parent_id']
+                            };
                             return true;
                         }
                     } else {
-                        if (data[i].id == value) {
-                            path[data[i].id] = data[i];
+                        if (data[i][$this.options.rename_id] == value) {
+                            path[data[i][$this.options.rename_id]] = {
+                                'id':data[i][$this.options.rename_id],
+                                'title':data[i][$this.options.rename_title],
+                                'parent_id':data[i]['parent_id']
+                            };
                             return true;
                         }
                     }
@@ -479,13 +489,23 @@
                 this.parent_id = parent_id;
                 var _data = {};
                 _data = $.extend(true,_data,this);
-                delete _data.sub;
-                $picker.data[level][parent_id][this.id] = _data;
+                delete _data[[$picker.options.rename_sub]];
+                $picker.data[level][parent_id][this[$picker.options.rename_id]] = {
+                    'id':_data[$picker.options.rename_id],
+                    'title':_data[$picker.options.rename_title],
+                    'parent_id':_data.parent_id,
+                    'level':level
+                };
                 _data.level = level;
-                $picker.datalist[_data.id] = _data;
-                if ($this.sub && $this.sub.length > 0) {
+                $picker.datalist[_data[$picker.options.rename_id]] = {
+                    'id':_data[$picker.options.rename_id],
+                    'title':_data[$picker.options.rename_title],
+                    'parent_id':_data.parent_id,
+                    'level':_data.level
+                };
+                if ($this[$picker.options.rename_sub] && $this[$picker.options.rename_sub].length > 0) {
                     $picker.maxlevel = level+1;
-                    $picker.makeData(level+1,$this.sub,$this.id);
+                    $picker.makeData(level+1,$this[$picker.options.rename_sub],$this[$picker.options.rename_id]);
                 }
             });
         },
