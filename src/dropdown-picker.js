@@ -35,7 +35,8 @@
         data:[]
     };
 
-    function DropdownPicker(element,options) {
+    function DropdownPicker(element,index,options) {
+        this.index = index;
         this.el = element;
         this.$element = $(element);
         this.options = $.extend({}, OPTIONS, $.isPlainObject(options) && options);
@@ -59,12 +60,12 @@
             var $this = this;
             var p = this.getPosition();
             var placeholder = this.$element.attr('placeholder') || this.options.placeholder;
-            var textspan = '<span class="dropdown-picker-span" style="' +
+            var textspan = '<span class="dropdown-picker-span index_'+this.index+'" style="' +
                 this.getWidthStyle(p.width) + 'height:' +
                 p.height + 'px;line-height:' + (p.height - 1) + 'px;">' +
                 (placeholder ? '<span class="placeholder">' + placeholder + '</span>' : '') +
                 '<span class="title"></span><div class="arrow"></div>' + '</span>';
-            var dropdown = '<div class="dropdown-picker" data-from="'+this.$element.attr('name')+'" style="left:0px;top:100%;' +
+            var dropdown = '<div class="dropdown-picker index_'+this.index+'" data-from="'+this.$element.attr('name')+'" style="left:0px;' +
                 this.getWidthStyle(p.width, true) + '">' +
                 '<div class="dropdown-select-wrap">' +
                 '<div class="dropdown-select-tab">' +
@@ -73,6 +74,7 @@
                 '<div class="dropdown-select level_1" data-level="1" style="display: block;"></div>' +
                 '</div></div>';
             this.$element.addClass('dropdown-picker-input');
+            this.$element.addClass('index_'+this.index);
             this.$textspan = $(textspan).insertAfter(this.$element);
             this.$dropdown = $(dropdown).insertAfter(this.$textspan);
 
@@ -85,18 +87,18 @@
             $(document).on('click', (this._mouteclick = function (e) {
                 var $target = $(e.target);
                 var $dropdown, $span, $input;
-                if ($target.is('.dropdown-picker-span')) {
+                if ($target.is('.dropdown-picker-span.index_'+$this.index)) {
                     $span = $target;
-                } else if ($target.is('.dropdown-picker-span *')) {
-                    $span = $target.parents('.dropdown-picker-span');
+                } else if ($target.is('.dropdown-picker-span.index_'+$this.index+' *')) {
+                    $span = $target.parents('.dropdown-picker-span.index_'+$this.index);
                 }
-                if ($target.is('.dropdown-picker-input')) {
+                if ($target.is('.dropdown-picker-input.index_'+$this.index)) {
                     $input = $target;
                 }
-                if ($target.is('.dropdown-picker')) {
+                if ($target.is('.dropdown-picker.index_'+$this.index)) {
                     $dropdown = $target;
-                } else if ($target.is('.dropdown-picker *')) {
-                    $dropdown = $target.parents('.dropdown-picker');
+                } else if ($target.is('.dropdown-picker.index_'+$this.index+' *')) {
+                    $dropdown = $target.parents('.dropdown-picker.index_'+$this.index);
                 }
                 if ((!$input && !$span && !$dropdown) ||
                     ($span && $span.get(0) !== $this.$textspan.get(0)) ||
@@ -294,26 +296,11 @@
         },
 
         getElement:function(){
-            return $(document).find('.dropdown-picker[data-from="'+this.$element.attr('name')+'"]');
+            return this.$dropdown;
         },
 
-        refresh: function (force) {
+        refresh: function () {
             var $this = this;
-            // clean the data-item for each $select
-            // var $select = this.$dropdown.find('.dropdown-select');
-            // $select.data('item', null);
-            // // parse value from value of the target $element
-            // var val = this.$element.val() || '';
-            // val = val.split('/');
-            // for(var level=1;level<=this.maxlevel;level++){
-            //     if (val[level] && level < val.length) {
-            //         this.data[level] = val[level];
-            //     } else if (force) {
-            //         this.data[level] = '';
-            //     }
-            //     this.output(level,0);
-            // }
-            // this.tab(1);
 
             var $select = this.$dropdown.find('.dropdown-select');
             var $tab = this.$dropdown.find('.dropdown-tab');
@@ -325,18 +312,6 @@
                 try{
                     switch ($this.options.type) {
                         case 'single':
-                            // var level = 1;
-                            // for(var level in this.data){
-                            //     for(var parent_id in this.data[level]) {
-                            //         for(var id in this.data[level][id]) {
-                            //             if ($values == id) {
-                            //                 this.tab(level,this.data[level][id].title);
-                            //                 this.output(level,parent_id);
-                            //             }
-                            //         }
-                            //
-                            //     }
-                            // }
                             var path = this.getPathByValue($values);
                             if ($.isEmptyObject(path)) {
                                 this.output(1,0);
@@ -396,14 +371,10 @@
             } else {
                 $this.output(1,0);
             }
-            // this.feedText();
-            // this.feedVal();
         },
 
         output: function (level,parent_id) {
-            var options = this.options;
             var $select = this.getElement().find('.dropdown-select').filter('.level_' + level + '');
-            var $tab = this.$dropdown.find('.dropdown-tab');
             var data = this.data[level];
 
             if (!$select || !$select.length) {
@@ -608,7 +579,7 @@
     $.fn.DPiker = function (option) {
         var args = [].slice.call(arguments, 1);
 
-        return this.each(function () {
+        return this.each(function (index) {
             var $this = $(this);
             var data = $this.data(NAMESPACE);
             var options;
@@ -620,7 +591,7 @@
                 }
 
                 options = $.extend({}, $this.data(), $.isPlainObject(option) && option);
-                $this.data(NAMESPACE, (data = new DropdownPicker(this, options)));
+                $this.data(NAMESPACE, (data = new DropdownPicker(this,index, options)));
             }
 
             if (typeof option === 'string' && $.isFunction(fn = data[option])) {
