@@ -32,9 +32,9 @@
         // single: level_x.id
         type:'single',
         need_choice_minimal_level: true,
-        rename_id:'id',
-        rename_title:'title',
-        rename_sub:'sub',
+        customize_id:'id',
+        customize_title:'title',
+        customize_sub:'sub',
         responsive:true,
         data:[]
     };
@@ -248,7 +248,7 @@
 
         feedText:function() {
             var text = this.getText();
-            if (text) {
+            if (text && (!this.options.need_choice_minimal_level || this.choiced_minimal_level)) {
                 this.$textspan.find('>.placeholder').hide();
                 this.$textspan.find('>.title').html(this.getText()).show();
             } else {
@@ -268,7 +268,11 @@
                         feedvalue = _feedvalue.join(',');break;
                 }
                 $(this.$element).val(feedvalue);
+            } else {
+                $(this.$element).val('');
             }
+
+            this.feedVal();
         },
 
         getPlaceHolder: function () {
@@ -328,7 +332,7 @@
                                 this.output(level,parent_id);
 
                                 var $select = $this.getElement().find('.dropdown-select.level_'+level);
-                                $this.choicepath[level] = level;
+                                $this.choicepath[level] = $this.data[level][parent_id][id].id;
                                 $select.data('item', $this.data[level][parent_id][id]);
                                 $select.find('a[data-id="'+id+'"]').addClass('active');
 
@@ -347,7 +351,7 @@
                                     if (latestid != id) $this.tab(level,title);
                                     $this.output(level,parent_id);
                                     var $select = $this.getElement().find('.dropdown-select.level_'+level);
-                                    $this.choicepath[level] = level;
+                                    $this.choicepath[level] = $this.data[level][parent_id][id].id;
                                     $select.data('item', $this.data[level][parent_id][id]);
                                     $select.find('a[data-id="'+id+'"]').addClass('active');
 
@@ -374,6 +378,11 @@
             } else {
                 $this.output(1,0);
             }
+
+        },
+
+        feedVal: function () {
+            this.$element.trigger('dp:updated',this);
         },
 
         output: function (level,parent_id) {
@@ -443,26 +452,29 @@
 
         getPathByValue:function(value) {
             var $this = this;
+            var customize_sub = $this.options.customize_sub;
+            var customize_id = $this.options.customize_id;
+            var customize_title = $this.options.customize_title;
             var path = {};
             var _getItem = function(data,value) {
                 for(var i in data){
-                    if (data[i][$this.options.rename_sub] && data[i][$this.options.rename_sub].length > 0) {
-                        if(_getItem(data[i][$this.options.rename_sub],value)){
+                    if (!$.isEmptyObject(data[i][customize_sub])) {
+                        if(_getItem(data[i][customize_sub],value)){
                             var _data = {};
                             _data = $.extend(true,_data,data[i]);
-                            delete _data[$this.options.rename_sub];
-                            path[data[i][$this.options.rename_id]] = {
-                                'id':_data[$this.options.rename_id],
-                                'title':_data[$this.options.rename_title],
+                            delete _data[customize_sub];
+                            path[data[i][customize_id]] = {
+                                'id':_data[customize_id],
+                                'title':_data[customize_title],
                                 'parent_id':_data['parent_id']
                             };
                             return true;
                         }
                     } else {
-                        if (data[i][$this.options.rename_id] == value) {
-                            path[data[i][$this.options.rename_id]] = {
-                                'id':data[i][$this.options.rename_id],
-                                'title':data[i][$this.options.rename_title],
+                        if (data[i][customize_id] == value) {
+                            path[data[i][customize_id]] = {
+                                'id':data[i][customize_id],
+                                'title':data[i][customize_title],
                                 'parent_id':data[i]['parent_id']
                             };
                             return true;
@@ -490,23 +502,23 @@
                 $this.parent_id = parent_id;
                 var _data = {};
                 _data = $.extend(true,_data,$this);
-                delete _data[[$picker.options.rename_sub]];
-                $picker.data[level][parent_id][$this[$picker.options.rename_id]] = {
-                    'id':_data[$picker.options.rename_id],
-                    'title':_data[$picker.options.rename_title],
+                delete _data[[$picker.options.customize_sub]];
+                $picker.data[level][parent_id][$this[$picker.options.customize_id]] = {
+                    'id':_data[$picker.options.customize_id],
+                    'title':_data[$picker.options.customize_title],
                     'parent_id':_data.parent_id,
                     'level':level
                 };
                 _data.level = level;
-                $picker.datalist[_data[$picker.options.rename_id]] = {
-                    'id':_data[$picker.options.rename_id],
-                    'title':_data[$picker.options.rename_title],
+                $picker.datalist[_data[$picker.options.customize_id]] = {
+                    'id':_data[$picker.options.customize_id],
+                    'title':_data[$picker.options.customize_title],
                     'parent_id':_data.parent_id,
                     'level':_data.level
                 };
-                if (!$.isEmptyObject($this[$picker.options.rename_sub])) {
+                if (!$.isEmptyObject($this[$picker.options.customize_sub])) {
                     $picker.maxlevel = level+1;
-                    $picker.makeData(level+1,$this[$picker.options.rename_sub],$this[$picker.options.rename_id]);
+                    $picker.makeData(level+1,$this[$picker.options.customize_sub],$this[$picker.options.customize_id]);
                 }
             };
         },
