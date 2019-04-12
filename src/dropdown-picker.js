@@ -31,6 +31,7 @@
         // path: level_1.id,.....,level_x.id
         // single: level_x.id
         type:'single',
+        root_text:'/',
         need_choice_minimal_level: true,
         customize_id:'id',
         customize_title:'title',
@@ -73,7 +74,7 @@
                 this.getWidthStyle(p.width, true) + '">' +
                 '<div class="dropdown-select-wrap">' +
                 '<div class="dropdown-select-tab">' +
-                '<a class="dropdown-tab active" data-level="1">/</a>' +
+                '<a class="dropdown-tab active" data-level="1">'+this.options.root_text+'</a>' +
                 '<div class="dropdown-select-content">' +
                 '<div class="dropdown-select level_1" data-level="1" style="display: block;"></div>' +
                 '</div></div>';
@@ -532,7 +533,7 @@
                     '<a' +
                     ' title="' + (n.title || '') + '"' +
                     ' data-id="' + (n.id || '') + '"' +
-                    ' data-parent_id="' + ($.isNumeric(n.parent_id) ? n.parent_id : '') + '"' +
+                    ' data-parent_id="' + n.parent_id + '"' +
                     ' data-level="' + level + '"' +
                     ' data-title="' + n.title + '"' +
                     ' class="' +
