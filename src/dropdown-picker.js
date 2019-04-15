@@ -210,10 +210,10 @@
 
         getChoice:function(){
             var $tabs = this.getElement().find('.dropdown-select');
-            var $choice = {};
+            var $choice = [];
             $.each($tabs, function(){
                 var _item = $(this).data('item');
-                if (_item) $choice[_item['id']] = _item;
+                if (_item) $choice.push(_item);
             });
             return $choice
         },
@@ -315,6 +315,7 @@
             var $values = this.$element.val();
             this['$tab_level_1'] = $tab.filter('[data-level="1"]');
             this['$select_level_1'] = $select.filter('.level_1');
+
             if ($values) {
                 var level = 1;
                 try{
@@ -325,6 +326,7 @@
                                 this.output(1,0);
                                 break;
                             }
+
                             for(var i in path){
                                 var id = path[i].id,
                                     parent_id = path[i].parent_id,
@@ -333,6 +335,10 @@
                                 this.output(level,parent_id);
 
                                 var $select = $this.getElement().find('.dropdown-select.level_'+level);
+                                // console.log(level);
+                                // console.log(parent_id);
+                                // console.log(id);
+                                // console.log($this.data[level][parent_id]);
                                 $this.choicepath[level] = $this.data[level][parent_id][id].id;
                                 $select.data('item', $this.data[level][parent_id][id]);
                                 $select.find('a[data-id="'+id+'"]').addClass('active');
@@ -343,6 +349,8 @@
                             break;
                         case 'path':
                             var ids = $values.split(',');
+                            // console.log(path);
+                            // console.log($this.data);
                             if (ids.length>0) {
                                 var latestid = ids[ids.length-1];
                                 ids.forEach(function(id) {
@@ -352,6 +360,9 @@
                                     if (latestid != id) $this.tab(level,title);
                                     $this.output(level,parent_id);
                                     var $select = $this.getElement().find('.dropdown-select.level_'+level);
+                                    // console.log(level);
+                                    // console.log(parent_id);
+                                    // console.log(id);
                                     $this.choicepath[level] = $this.data[level][parent_id][id].id;
                                     $select.data('item', $this.data[level][parent_id][id]);
                                     $select.find('a[data-id="'+id+'"]').addClass('active');
@@ -456,7 +467,7 @@
             var customize_sub = $this.options.customize_sub;
             var customize_id = $this.options.customize_id;
             var customize_title = $this.options.customize_title;
-            var path = {};
+            var path = [];
             var _getItem = function(data,value) {
                 for(var i in data){
                     if (!$.isEmptyObject(data[i][customize_sub])) {
@@ -464,20 +475,20 @@
                             var _data = {};
                             _data = $.extend(true,_data,data[i]);
                             delete _data[customize_sub];
-                            path[data[i][customize_id]] = {
+                            path.unshift({
                                 'id':_data[customize_id],
                                 'title':_data[customize_title],
                                 'parent_id':_data['parent_id']
-                            };
+                            });
                             return true;
                         }
                     } else {
                         if (data[i][customize_id] == value) {
-                            path[data[i][customize_id]] = {
+                            path.unshift({
                                 'id':data[i][customize_id],
                                 'title':data[i][customize_title],
                                 'parent_id':data[i]['parent_id']
-                            };
+                            });
                             return true;
                         }
                     }
